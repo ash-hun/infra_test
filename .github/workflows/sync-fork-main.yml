@@ -30,7 +30,7 @@ jobs:
         run: |
           git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
       
-      - name: Debug GH_PAT
+      - name: Debug PAT
         run: |
           if [[ -z "${FORK_GITHUB_TOKEN_JH}" ]]; then
             echo "FORK_GITHUB_TOKEN_JH is empty!"
@@ -45,4 +45,7 @@ jobs:
         env:
           FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
         run: |
-          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
+          NEW_BRANCH="sync-branch-$(date +%Y%m%d%H%M%S)"
+          git checkout -b $NEW_BRANCH
+          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git $NEW_BRANCH
+          # git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
