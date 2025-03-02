@@ -52,6 +52,10 @@ jobs:
           FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
+          echo "${USER_NAME}"
+          echo "${FORK_GITHUB_TOKEN}"
+          echo "${#USER_NAME}"
+          echo "${#FORK_GITHUB_TOKEN}"
           git pull --rebase https://${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git main
       
       - name: Push changes to fork's main branch
