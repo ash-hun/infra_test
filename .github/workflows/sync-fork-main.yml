@@ -14,8 +14,10 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           if ! echo "$ISSUE_TITLE" | grep -qE "^\[N\]-"; then
             echo "naming_check=true" >> $GITHUB_ENV
+            echo "true"
           else
             echo "naming_check=false" >> $GITHUB_ENV
+            echo "false"
           fi
       
       - name: Check issue title
@@ -31,21 +33,25 @@ jobs:
           persist-credentials: false
 
       - name: Configure Git
+        if: env.naming_check == 'true'
         run: |
           git config user.name "ash-hun"
           git config user.email "jhchoi09@naver.com"
 
       - name: Add fork remote with PAT
+        if: env.naming_check == 'true'
         run: |
           git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/infra_test.git
       
       - name: Pull latest changes from origin
         env:
             FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+        if: env.naming_check == 'true'
         run: |
           git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
       
       - name: Debug PAT
+        if: env.naming_check == 'true'
         run: |
           if [[ -z "${FORK_GITHUB_TOKEN_JH}" ]]; then
             echo "FORK_GITHUB_TOKEN_JH is empty!"
@@ -59,6 +65,7 @@ jobs:
       - name: Push changes to fork's main branch
         env:
           FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+        if: env.naming_check == 'true'
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
