@@ -41,9 +41,9 @@ jobs:
       - name: Add fork remote with PAT
         if: env.naming_check == 'true'
         run: |
-          echo "User: ${env.user_name}"
-          echo "Token: ${secrets.user_token}"
-          git remote add local https://x-access-token:${secrets.user_token}@github.com/${env.user_name}/infra_test.git
+          echo "User: ${{env.user_name}}"
+          echo "Token: ${{env.user_token}}"
+          git remote add local https://x-access-token:${{env.user_token}}@github.com/${{env.user_name}}/infra_test.git
       
       - name: Pull latest changes from origin
         if: env.naming_check == 'true'
