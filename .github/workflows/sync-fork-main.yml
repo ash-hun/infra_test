@@ -57,7 +57,6 @@ jobs:
           echo "User: ${{env.user_name}}"
           echo "Token Length: ${{secrets.user_token}}"
           git pull --rebase https://${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git main
-          # git pull --rebase https://x-access-token:${env.user_token}@github.com/${env.user_name}/infra_test.git main
       
       - name: Push changes to fork's main branch
         if: env.naming_check == 'true'
@@ -71,5 +70,6 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          git push https://${{env.user_name}}:${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
+          # git push https://${{env.user_name}}:${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
+          git push  https://${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
