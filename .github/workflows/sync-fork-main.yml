@@ -12,7 +12,7 @@ jobs:
         id: check
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          if contains(ISSUE_TITLE, '[N]'); then
+          if contains("$ISSUE_TITLE", '[N]'); then
             echo "naming_check=true" >> $GITHUB_ENV
             echo "true"
           else
