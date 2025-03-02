@@ -11,11 +11,14 @@ jobs:
       - name: Check issue title
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          if [[ ! "$ISSUE_TITLE" =~ ^\[N\]- ]]; then
-            echo "Issue title does not match the required format. Exiting..."
+          echo "Issue Title: $ISSUE_TITLE"
+
+          if ! echo "$ISSUE_TITLE" | grep -qE "^\[N\]-"; then
+            echo "Issue title does not match the required format '[N]-'. Exiting..."
             exit 0
           fi
         shell: bash
+
       
       - name: Checkout original repository's main branch
         uses: actions/checkout@v3
