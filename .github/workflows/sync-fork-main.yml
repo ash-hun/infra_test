@@ -14,8 +14,11 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           echo "Checking issue title: $ISSUE_TITLE"
           
-          if echo "$ISSUE_TITLE" | grep -q "\[N\]"; then
+          if echo "$ISSUE_TITLE" | grep -q "\[BE_p]"; then
             echo "naming_check=true" >> $GITHUB_ENV
+            echo "user_name=ash-hun" >> $GITHUB_ENV
+            echo "user_email=jhchoi09@naver.com" >> $GITHUB_ENV
+            echo "user_token=${{ secrets.FORK_GITHUB_TOKEN_JH }}" >> $GITHUB_ENV
             echo "true"
           else
             echo "naming_check=false" >> $GITHUB_ENV
@@ -32,36 +35,29 @@ jobs:
       - name: Configure Git
         if: env.naming_check == 'true'
         run: |
-          git config user.name "ash-hun"
-          git config user.email "jhchoi09@naver.com"
+          git config user.name env.user_name
+          git config user.email env.user_email
 
       - name: Add fork remote with PAT
+        env:
+          USER_NAME: env.user_name
+          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
-          git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/infra_test.git
+          git remote add local https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git
       
       - name: Pull latest changes from origin
         env:
-            FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+          USER_NAME: env.user_name
+          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
-          git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
-      
-      - name: Debug PAT
-        if: env.naming_check == 'true'
-        run: |
-          if [[ -z "${FORK_GITHUB_TOKEN_JH}" ]]; then
-            echo "FORK_GITHUB_TOKEN_JH is empty!"
-            exit 1
-          else
-            echo "FORK_GITHUB_TOKEN_JH is set and has length: ${#FORK_GITHUB_TOKEN_JH}"
-          fi
-        env:
-          FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+          git pull --rebase https://${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git main
       
       - name: Push changes to fork's main branch
         env:
-          FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+          USER_NAME: env.user_name
+          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
@@ -73,5 +69,5 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git "$NEW_BRANCH"
+          git push https://${USER_NAME}:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
