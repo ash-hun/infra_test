@@ -8,18 +8,21 @@ jobs:
   sync_fork:
     runs-on: ubuntu-latest
     steps:
-      - name: Check issue title
+      - name: Check variable and decide
+        id: check
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          echo "Issue Title: $ISSUE_TITLE"
-
           if ! echo "$ISSUE_TITLE" | grep -qE "^\[N\]-"; then
-            echo "Issue title does not match the required format '[N]-'. Exiting..."
-            exit 0
+            echo "naming_check=true" >> $GITHUB_ENV
+          else
+            echo "naming_check=false" >> $GITHUB_ENV
           fi
-        shell: bash
-
       
+      - name: Check issue title
+        if: env.naming_check == 'false'
+        run: |
+          exit 0
+
       - name: Checkout original repository's main branch
         uses: actions/checkout@v3
         with:
