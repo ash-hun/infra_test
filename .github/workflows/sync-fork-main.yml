@@ -39,29 +39,18 @@ jobs:
           git config user.email env.user_email
 
       - name: Add fork remote with PAT
-        env:
-          USER_NAME: env.user_name
-          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
-          git remote add local https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git
+          git remote add local https://x-access-token:${env.user_token}@github.com/${env.user_name}/infra_test.git
       
       - name: Pull latest changes from origin
-        env:
-          USER_NAME: env.user_name
-          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
-          echo "${USER_NAME}"
-          echo "${FORK_GITHUB_TOKEN}"
-          echo "${#USER_NAME}"
-          echo "${#FORK_GITHUB_TOKEN}"
-          git pull --rebase https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git main
+          echo "User: ${env.user_name}"
+          echo "Token Length: ${#env.user_token}"
+          git pull --rebase https://x-access-token:${env.user_token}@github.com/${env.user_name}/infra_test.git main
       
       - name: Push changes to fork's main branch
-        env:
-          USER_NAME: env.user_name
-          FORK_GITHUB_TOKEN: env.user_token
         if: env.naming_check == 'true'
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
@@ -73,6 +62,5 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          # git push https://${USER_NAME}:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
-          git push https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
+          git push https://${env.user_name}:${env.user_token}@github.com/${env.user_name}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
