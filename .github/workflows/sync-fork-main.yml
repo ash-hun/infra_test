@@ -12,18 +12,13 @@ jobs:
         id: check
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          if ! echo "$ISSUE_TITLE" | grep -qE "^\[N\]-"; then
+          if contains(ISSUE_TITLE, '[N]'); then
             echo "naming_check=true" >> $GITHUB_ENV
             echo "true"
           else
             echo "naming_check=false" >> $GITHUB_ENV
             echo "false"
           fi
-      
-      - name: Check issue title
-        if: env.naming_check == 'false'
-        run: |
-          exit 0
 
       - name: Checkout original repository's main branch
         uses: actions/checkout@v3
