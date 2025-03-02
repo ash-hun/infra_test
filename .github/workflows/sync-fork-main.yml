@@ -28,7 +28,18 @@ jobs:
             FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
         run: |
           git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
-
+      
+      - name: Debug GH_PAT
+        run: |
+          if [[ -z "${FORK_GITHUB_TOKEN_JH}" ]]; then
+            echo "FORK_GITHUB_TOKEN_JH is empty!"
+            exit 1
+          else
+            echo "FORK_GITHUB_TOKEN_JH is set and has length: ${#FORK_GITHUB_TOKEN_JH}"
+          fi
+        env:
+          FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+      
       - name: Push changes to fork's main branch
         env:
           FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
