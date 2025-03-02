@@ -56,7 +56,7 @@ jobs:
           echo "${FORK_GITHUB_TOKEN}"
           echo "${#USER_NAME}"
           echo "${#FORK_GITHUB_TOKEN}"
-          git pull --rebase https://${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git main
+          git pull --rebase https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git main
       
       - name: Push changes to fork's main branch
         env:
@@ -73,5 +73,6 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          git push https://${USER_NAME}:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
+          # git push https://${USER_NAME}:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
+          git push https://x-access-token:${FORK_GITHUB_TOKEN}@github.com/${USER_NAME}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
