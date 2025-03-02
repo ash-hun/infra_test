@@ -18,13 +18,11 @@ jobs:
             echo "naming_check=true" >> $GITHUB_ENV
             echo "user_name=ash-hun" >> $GITHUB_ENV
             echo "user_email=jhchoi09@naver.com" >> $GITHUB_ENV
-            echo "user_token=${{ secrets.FORK_GITHUB_TOKEN_JH }}" >> $GITHUB_ENV
             echo "true"
           elif echo "$ISSUE_TITLE" | grep -q "\[BE\]"; then
             echo "naming_check=true" >> $GITHUB_ENV
             echo "user_name=HS980924" >> $GITHUB_ENV
             echo "user_email=choihs980924@gmail.com" >> $GITHUB_ENV
-            echo "user_token=${{ secrets.FORK_GITHUB_TOKEN_HS }}" >> $GITHUB_ENV
             echo "true"
           else
             echo "naming_check=false" >> $GITHUB_ENV
@@ -47,16 +45,18 @@ jobs:
       - name: Add fork remote with PAT
         if: env.naming_check == 'true'
         run: |
-          echo "User: ${{env.user_name}}"
-          echo "Token: ${{secrets.user_token}}"
-          git remote add local https://x-access-token:${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git
+          if env.user_name=='ash-hun'; then
+            git remote add local https://x-access-token:${{secrets.FORK_GITHUB_TOKEN_JH}}@github.com/${{env.user_name}}/infra_test.git
+          elif env.user_name=='HS980924'; then
+            git remote add local https://x-access-token:${{secrets.FORK_GITHUB_TOKEN_HS}}@github.com/${{env.user_name}}/infra_test.git
       
       - name: Pull latest changes from origin
         if: env.naming_check == 'true'
         run: |
-          echo "User: ${{env.user_name}}"
-          echo "Token Length: ${{secrets.user_token}}"
-          git pull --rebase https://${{secrets.user_token}}@github.com/${{env.user_name}}/infra_test.git main
+          if env.user_name=='ash-hun'; then
+            git pull --rebase https://${{secrets.FORK_GITHUB_TOKEN_JH}}@github.com/${{env.user_name}}/infra_test.git main
+          elif env.user_name=='HS980924'; then
+            git pull --rebase https://${{secrets.FORK_GITHUB_TOKEN_HS}}@github.com/${{env.user_name}}/infra_test.git main
       
       - name: Push changes to fork's main branch
         if: env.naming_check == 'true'
@@ -70,5 +70,8 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          git push https://${{env.user_name}}:${{env.user_token}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
+          if env.user_name=='ash-hun'; then
+            git push https://${{env.user_name}}:${{secrets.FORK_GITHUB_TOKEN_JH}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
+          elif env.user_name=='HS980924'; then
+            git push https://${{env.user_name}}:${{secrets.FORK_GITHUB_TOKEN_HS}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
