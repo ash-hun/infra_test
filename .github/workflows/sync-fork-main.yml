@@ -8,6 +8,15 @@ jobs:
   sync_fork:
     runs-on: ubuntu-latest
     steps:
+      - name: Check issue title
+        run: |
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          if [[ ! "$ISSUE_TITLE" =~ ^\[N\]- ]]; then
+            echo "Issue title does not match the required format. Exiting..."
+            exit 0
+          fi
+        shell: bash
+      
       - name: Checkout original repository's main branch
         uses: actions/checkout@v3
         with:
@@ -45,7 +54,14 @@ jobs:
         env:
           FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
         run: |
-          NEW_BRANCH="sync-branch-$(date +%Y%m%d%H%M%S)"
-          git checkout -b $NEW_BRANCH
-          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git $NEW_BRANCH
-          # git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          
+          SAFE_TITLE=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-+|-+$//g')
+          
+          NEW_BRANCH="issue-${SAFE_TITLE:0:30}-${ISSUE_NUMBER}"
+
+          echo "Creating new branch: $NEW_BRANCH"
+          git checkout -b "$NEW_BRANCH"
+          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git "$NEW_BRANCH"
+          echo "Pushed to new branch: $NEW_BRANCH"
