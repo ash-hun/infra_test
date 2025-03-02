@@ -48,10 +48,10 @@ jobs:
       - name: Pull latest changes from origin
         if: env.naming_check == 'true'
         run: |
-          echo "User: ${env.user_name}"
-          echo "Token Length: ${#env.user_token}"
-          #  git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
-          git pull --rebase https://x-access-token:${env.user_token}@github.com/${env.user_name}/infra_test.git main
+          echo "User: ${{env.user_name}}"
+          echo "Token Length: ${{env.user_token}}"
+          git pull --rebase https://${{env.user_token}}@github.com/${{env.user_name}}/infra_test.git main
+          # git pull --rebase https://x-access-token:${env.user_token}@github.com/${env.user_name}/infra_test.git main
       
       - name: Push changes to fork's main branch
         if: env.naming_check == 'true'
@@ -65,5 +65,5 @@ jobs:
 
           echo "Creating new branch: $NEW_BRANCH"
           git checkout -b "$NEW_BRANCH"
-          git push https://${env.user_name}:${env.user_token}@github.com/${env.user_name}/infra_test.git "$NEW_BRANCH"
+          git push https://${{env.user_name}}:${{env.user_token}}@github.com/${{env.user_name}}/infra_test.git "$NEW_BRANCH"
           echo "Pushed to new branch: $NEW_BRANCH"
