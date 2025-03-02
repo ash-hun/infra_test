@@ -1,2 +1,2 @@
 # infra_test
-infra_testing
+infra_testing 2

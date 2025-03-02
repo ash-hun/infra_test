@@ -1,0 +1,36 @@
+name: Sync Fork Main on Issue Opened
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  sync_fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout original repository's main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add fork remote with PAT
+        run: |
+          git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/infra_test.git
+      
+      - name: Pull latest changes from origin
+        env:
+            FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+        run: |
+          git pull --rebase https://${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
+
+      - name: Push changes to fork's main branch
+        env:
+          FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
+        run: |
+          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
