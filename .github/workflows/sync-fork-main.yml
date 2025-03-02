@@ -21,7 +21,7 @@ jobs:
 
       - name: Add fork remote with PAT
         run: |
-          git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/ARTIFY.git
+          git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/infra_test.git
 
       - name: Push changes to fork's main branch
         run: |
