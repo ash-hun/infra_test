@@ -24,5 +24,7 @@ jobs:
           git remote add local https://x-access-token:${{ secrets.FORK_GITHUB_TOKEN_JH }}@github.com/ash-hun/infra_test.git
 
       - name: Push changes to fork's main branch
+        env:
+          FORK_GITHUB_TOKEN_JH: ${{ secrets.FORK_GITHUB_TOKEN_JH }}
         run: |
-          git push local main --force
+          git push https://ash-hun:${FORK_GITHUB_TOKEN_JH}@github.com/ash-hun/infra_test.git main
