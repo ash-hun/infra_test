@@ -20,6 +20,12 @@ jobs:
             echo "user_email=jhchoi09@naver.com" >> $GITHUB_ENV
             echo "user_token=${{ secrets.FORK_GITHUB_TOKEN_JH }}" >> $GITHUB_ENV
             echo "true"
+          elif echo "$ISSUE_TITLE" | grep -q "\[BE\]"; then
+            echo "naming_check=true" >> $GITHUB_ENV
+            echo "user_name=HS980924" >> $GITHUB_ENV
+            echo "user_email=choihs980924@gmail.com" >> $GITHUB_ENV
+            echo "user_token=${{ secrets.FORK_GITHUB_TOKEN_HS }}" >> $GITHUB_ENV
+            echo "true"
           else
             echo "naming_check=false" >> $GITHUB_ENV
             echo "false"
